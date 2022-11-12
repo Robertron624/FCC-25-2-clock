@@ -1,32 +1,50 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [breakLength, setBreakLength] = useState(5)
+  const [sessionLength, setSessionLength] = useState(25)
+  const [timeLeft, setTimeLeft] = useState('25:00')
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <div className="app">
+        <div className='app-title'>
+          <h1>25 + 5 Clock</h1>
+        </div>
+        <div className="modifiers">
+          <div className="break-length">
+              <h2 className="break-title" id='break-label'>Break Length</h2>
+              <div className="break-buttons">
+                <i className="fa-sharp fa-solid fa-arrow-down" id='break-decrement'></i>
+                <span className="break-length" id='break-length'>{breakLength}</span>
+                <i className="fa-sharp fa-solid fa-arrow-up" id='break-increment'></i>
+              </div>
+          </div>
+          <div className="session-length">
+              <h2 className="session-title" id='session-label'>Session Length</h2>
+              <div className="session-buttons">
+                <i className="fa-sharp fa-solid fa-arrow-down" id='session-decrement'></i>
+                <span className="session-length" id='session-length'>{sessionLength}</span>
+                <i className="fa-sharp fa-solid fa-arrow-up" id='session-increment'></i>
+              </div>
+          </div>
+        </div>
+        <div className="timer">
+          <div className="timer-wrapper">
+            <div id="timer-label">Session</div>
+            <div id="time-left">{timeLeft}</div>
+          </div>
+        </div>
+        <div className="controls">
+          <button id='start_stop'>
+          <i className="fa-solid fa-play"></i>
+          <i className="fa-solid fa-stop"></i>
+          </button>
+          <button id="reset">
+          <i className="fa-solid fa-arrows-rotate"></i>
+          </button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
