@@ -1,20 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [breakLength, setBreakLength] = useState(5);
   const [sessionLength, setSessionLength] = useState(25);
-  const [timeLeft, setTimeLeft] = useState("25:00");
   const [timerOn, setTimerOn] = useState(false);
+  const [counter, setCounter] = useState(1500)
+  const [currentTimer, setCurrentTimer] = useState('Session')
+
+  let minutes = Math.floor(counter/60).toString().padStart(2, '0')
+
+  let seconds = (counter - Number(minutes) * 60 ).toString().padStart(2, '0')
+
+  useEffect(() => {
+    if(!timerOn){
+      return
+    }
+    const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    // @ts-ignore
+    return () => clearInterval(timer)
+  }, [counter, timerOn])
+
+  useEffect(()=>{
+    setCounter(sessionLength * 60)
+  }, [sessionLength])
 
   const handleStartStop = () => {
     setTimerOn((current) => !current);
   };
 
+  useEffect(() => {
+    const audio = document.getElementById('beep')
+  
+    if(counter == 0 && currentTimer == 'Session'){
+      // @ts-ignore
+      audio?.play()
+      setCurrentTimer('Break')
+      setCounter(breakLength * 60)
+      setTimerOn(true)
+      return
+    }
+
+    if(counter == 0 && currentTimer == 'Break'){
+      // @ts-ignore
+      audio?.play()
+      setCurrentTimer('Session');
+      setCounter(sessionLength * 60);
+      setTimerOn(true);
+      return;
+    }
+
+  }, [counter, breakLength, currentTimer, sessionLength])
+  
+
   const resetValues = () => {
     setBreakLength(5);
     setSessionLength(25);
-    setTimeLeft("25:00");
+    setTimerOn(false)
+    setCounter(1500)
   };
 
   const handleBreakDecrement = () => {
@@ -25,15 +68,11 @@ function App() {
 
   const handleSessionIncrement = () => {
     setSessionLength(sessionLength + 1);
-    const newTimeLeftHours = Number(timeLeft.slice(0, 2)) + 1;
-    setTimeLeft(`${newTimeLeftHours.toString()}:00`);
   };
 
   const handleSessionDecrement = () => {
     if (sessionLength > 1) {
       setSessionLength(sessionLength - 1);
-      const newTimeLeftHours = Number(timeLeft.slice(0, 2)) - 1;
-      setTimeLeft(`${newTimeLeftHours.toString()}:00`);
     }
   };
 
@@ -87,12 +126,12 @@ function App() {
         </div>
         <div className="timer">
           <div className="timer-wrapper">
-            <div id="timer-label">Session</div>
-            <div id="time-left">{timeLeft}</div>
+            <div id="timer-label">{currentTimer}</div>
+            <div id="time-left">{`${minutes}:${seconds}`}</div>
           </div>
         </div>
         <div className="controls">
-          <button id="start_stop">
+          <button id="start_stop" onClick={handleStartStop}>
             <i className="fa-solid fa-play"></i>
             <i className="fa-solid fa-stop"></i>
           </button>
